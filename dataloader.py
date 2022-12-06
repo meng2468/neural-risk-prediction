@@ -18,7 +18,7 @@ class EICUDataSet(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        x = np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f')
+        x = torch.tensor(np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f'))
         if self.labels.loc[idx]['survival_90days'] == 'alive':
             y = 1
         else:
