@@ -23,5 +23,5 @@ class EICUDataSet(Dataset):
             y = 1
         else:
             y = 0
-        return x, y
+        return x, torch.tensor(np.array(y,dtype='f'))
 
