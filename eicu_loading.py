@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!conda activate thesis
 # coding: utf-8
 
 # In[1]:
@@ -7,13 +7,15 @@
 import pandas as pd
 import os
 
-file_name = os.path.join('eicu',os.listdir('eicu')[0])
+file_name = os.path.join('../Data/eicu',os.listdir('../Data/eicu')[0])
 
 
 # In[3]:
 
 
 df = pd.read_excel(file_name)
+df = df.query('patientunitstayid != 708912')
+
 
 
 # In[120]:
@@ -32,14 +34,8 @@ cat_features = list(df.drop(list(ts_features), axis=1).columns.values) + ['sxyl_
 df_cat = df[cat_features]
 
 
-# In[125]:
-
-
-df_cat['survival_90days'].describe()
-
-
 # In[159]:
-
+print('Splitting out individual measurements')
 
 df_singles = {}
 for x in measurements:
@@ -48,7 +44,7 @@ for x in measurements:
 
 
 # In[160]:
-
+print('Renaming columns and ts')
 
 df_msingles = {}
 for k,v in df_singles.items():
@@ -60,16 +56,12 @@ for k,v in df_singles.items():
     else:
         print('Not time series but grouped here', k)
 
-    
-
 
 # In[161]:
 
 
 df_reformat = pd.concat([v for k, v in df_msingles.items()], ignore_index=True)
 df_reformat = df_reformat.sort_values(by=['patientunitstayid','t', 'variable'])[['patientunitstayid','t','variable','value']]
-
-df_reformat
 
 
 # In[162]:
@@ -87,16 +79,17 @@ for x in patients:
 
 # In[163]:
 
-
 df_cat['id'] = df_cat['patientunitstayid'].apply(lambda x: patient_to_id[x])
 df_cat = df_cat.set_index('id')
+
 df_reformat['id'] = df_reformat['patientunitstayid'].apply(lambda x: patient_to_id[x])
 df_reformat = df_reformat.set_index('id')
 
 
+
 # In[164]:
 
-
+print('Saving to csvs')
 df_reformat.to_csv('eicu_prepared_X.csv')
 
 
