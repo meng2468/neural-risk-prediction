@@ -22,7 +22,7 @@ class EICUDataSet(Dataset):
         if self.labels.loc[idx]['survival_90days'] == 'alive':
             y = 1
         else:
-            y = 1
+            y = 0
         return x, torch.tensor(np.array(y))
 
 # class TEstDataSet(Dataset):

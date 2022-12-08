@@ -8,12 +8,13 @@ print(f"Using {device} device")
 class BaseRecurrent(nn.Module):
     def __init__(self):
         super(BaseRecurrent, self).__init__()
+        self.hidden_size = 60
         self.flatten = nn.Flatten()
-        self.recurrent = nn.RNN(input_size=33, hidden_size=30)
+        self.recurrent = nn.RNN(input_size=33, hidden_size=self.hidden_size)
         self.relu = nn.ReLU()
-        self.final = nn.Linear(in_features=450,out_features=1)
+        self.final = nn.Linear(in_features=self.hidden_size,out_features=2)
 
     def forward(self, x):
         out, hidden = self.recurrent(x)
-        logits = self.relu(self.final(out.view(-1, 450)))
+        logits = (self.final(out[:,-1,:]))
         return logits
