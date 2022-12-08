@@ -7,14 +7,15 @@ def train_model(dataloader, model, loss_fn, optimizer):
     size=len(dataloader.dataset)
     for batch, (X, y) in enumerate(dataloader):
         pred = model(X)
-        loss = loss_fn(pred.view(-1), y)
+
+        loss = loss_fn(pred.view(-1, 2), y)
 
         # Backpropagation
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        if batch % 40 == 0:
+        if batch % 50 == 0:
             # print(pred, y), loss
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
