@@ -22,6 +22,9 @@ if __name__ == '__main__':
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
     for epoch in range(epochs):
+        print('*'*20)
+        print('Running Epoch', epoch)
+        # test_loop(loader, model, loss_fn)
         train_model(loader, model, loss_fn, optimizer)
-        test_loop(loader, model, loss_fn)
 
+    torch.save(model.state_dict, 'base_model.ts')
