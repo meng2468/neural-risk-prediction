@@ -4,14 +4,13 @@ import pandas as pd
 
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
-def save_plot_loss(train_loss, test_loss, model_name):
+def save_plot_loss(train_loss, test_loss, model_name):    
     fig = go.Figure()
 
     fig.add_trace(
     go.Scatter(
-        x=range(len(train_loss)),
+        x=list(range(len(train_loss))),
         y=train_loss,
         mode='lines',
         name='Train',
@@ -20,7 +19,7 @@ def save_plot_loss(train_loss, test_loss, model_name):
 
     fig.add_trace(
     go.Scatter(
-        x=range(len(test_loss)),
+        x=list(range(len(test_loss))),
         y=test_loss,
         mode='lines',
         name='Validation',
@@ -43,7 +42,7 @@ def save_plot_loss(train_loss, test_loss, model_name):
     fig.update_yaxes(
         title='Loss',
         # dtick=20,
-        range=[-.1,2],
+        # range=[-.1,2],
         dtick=.25
     )
 

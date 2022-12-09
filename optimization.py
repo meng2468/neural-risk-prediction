@@ -26,7 +26,7 @@ def train_model(dataloader, model, loss_fn, optimizer):
     total_loss /= len(dataloader)
     correct /= size
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
-    return total_loss, correct
+    return total_loss.item(), correct
 
 def test_loop(dataloader, model, loss_fn):
     size = len(dataloader.dataset)
