@@ -2,16 +2,16 @@ import torch
 from torch import nn
 
 from dataloader import EICUDataSet
-from torch.utils.data import Dataset, DataLoader
-from models import BaseRecurrent
+from torch.utils.data import DataLoader
+from models import BaseRecurrent, LayeredRecurrent
 
 from optimization import train_model, test_loop
 from evaluation import save_plot_loss
 
 if __name__ == '__main__':
-    learning_rate = 1e-2
+    learning_rate = 1e-5
     batch_size = 50
-    epochs = 15
+    epochs = 40
 
     loss_fn =  nn.CrossEntropyLoss()
 
@@ -25,6 +25,10 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True)
 
     model = BaseRecurrent()
+    model_name = 'base_rnn'
+    
+    model = LayeredRecurrent()
+    model_name = 'layered_rnn'
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -42,8 +46,8 @@ if __name__ == '__main__':
 
         accurracies[0].append(tr_a)
         accurracies[1].append(ts_a)
-
-        save_plot_loss(losses[0], losses[1], 'base_rnn')
+        
+        save_plot_loss(losses[0], losses[1], model_name)
         
 
-    torch.save(model.state_dict, 'base_model.ts')
+    torch.save(model.state_dict, 'models/'+model_name+'.model')
