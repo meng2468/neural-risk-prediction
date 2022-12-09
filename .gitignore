@@ -7,6 +7,6 @@ evaluation/*
 
 *.ipynb
 
-.model
+*.model
 
-.json
+*.json
