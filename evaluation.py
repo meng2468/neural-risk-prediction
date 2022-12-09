@@ -42,8 +42,8 @@ def save_plot_loss(train_loss, test_loss, model_name):
     fig.update_yaxes(
         title='Loss',
         # dtick=20,
-        # range=[-.1,2],
-        dtick=.25
+        range=[0,max(train_loss)*1.1],
+        dtick=.1
     )
 
     fig.write_image("evaluation/"+model_name+"_loss.jpeg")
