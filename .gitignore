@@ -6,3 +6,7 @@ __pycache__
 evaluation/*
 
 *.ipynb
+
+.model
+
+.json
