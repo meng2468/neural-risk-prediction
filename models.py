@@ -10,7 +10,7 @@ class BaseRecurrent(nn.Module):
         super(BaseRecurrent, self).__init__()
         self.hidden_size = 120
         self.flatten = nn.Flatten()
-        self.recurrent = nn.RNN(input_size=33, hidden_size=self.hidden_size, dropout=.5)
+        self.recurrent = nn.RNN(input_size=33, hidden_size=self.hidden_size)
         self.relu = nn.ReLU()
         self.final = nn.Linear(in_features=self.hidden_size,out_features=2)
 
