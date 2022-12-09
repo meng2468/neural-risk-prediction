@@ -6,11 +6,12 @@ from torch.utils.data import Dataset, DataLoader
 from models import BaseRecurrent
 
 from optimization import train_model, test_loop
+from evaluation import save_plot_loss
 
 if __name__ == '__main__':
     learning_rate = 1e-2
-    batch_size = 64
-    epochs = 6
+    batch_size = 50
+    epochs = 15
 
     loss_fn =  nn.CrossEntropyLoss()
 
@@ -25,14 +26,24 @@ if __name__ == '__main__':
 
     model = BaseRecurrent()
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+    losses = [[],[]]
+    accurracies = [[],[]]
     for epoch in range(epochs):
         print('*'*20)
         print('Running Epoch', epoch)
         
-        train_model(train_loader, model, loss_fn, optimizer)
-        test_loop(val_loader, model, loss_fn)
-        test_loop(test_loader, model, loss_fn)
+        tr_l, tr_a = train_model(train_loader, model, loss_fn, optimizer)
+        ts_l, ts_a = test_loop(val_loader, model, loss_fn)
+
+        losses[0].append(tr_l)
+        losses[1].append(ts_l)
+
+        accurracies[0].append(tr_a)
+        accurracies[1].append(ts_a)
+
+        save_plot_loss(losses[0], losses[1], 'base_rnn')
+        
 
     torch.save(model.state_dict, 'base_model.ts')
