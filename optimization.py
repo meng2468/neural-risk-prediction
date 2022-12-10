@@ -1,12 +1,14 @@
+import numpy as np
 import torch
 from torch import nn
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, roc_auc_score
 
 
 def evaluate_pred(pred, y_true):
     y_pred = torch.argmax(pred, dim=1)
-    report = classification_report(y_true, y_pred, output_dict=True)
-    return report
+    report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    roc_auc = roc_auc_score(y_true, pred)
+    return report, roc_auc
     
 def train_model(dataloader, model, loss_fn, optimizer):
     size=len(dataloader.dataset)
@@ -16,9 +18,9 @@ def train_model(dataloader, model, loss_fn, optimizer):
     for batch, (X, y) in enumerate(dataloader):
         pred = model(X)
 
-        loss = loss_fn(pred.view(-1, 2), y)
+        loss = loss_fn(pred.view(-1), y)
         total_loss += loss
-        correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+        correct += (torch.round(pred.view(-1)) == y).sum()
 
         # Backpropagation
         optimizer.zero_grad()
@@ -31,7 +33,7 @@ def train_model(dataloader, model, loss_fn, optimizer):
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
     total_loss /= len(dataloader)
-    correct /= size
+    correct = int(correct)/size
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
     return total_loss.item(), correct
 
@@ -46,17 +48,40 @@ def test_loop(dataloader, model, loss_fn):
     with torch.no_grad():
         for X, y in dataloader:    
             pred = model(X)
+            test_loss += loss_fn(pred.view(-1), y).item()
+            correct += (torch.round(pred.view(-1)) == y).sum()
+
+            total_pred = torch.cat((total_pred, pred), 0)
+            total_true += list(y)
+
+    y_pred = torch.round(total_pred)
+
+    f1, roc_auc = evaluate_pred(y_pred, total_true)
+    print('')
+    print('-'*20)
+    print('Evaluation')
+    for k, v in f1.items():
+        print(k, v)
+    print('ROC AUC:',roc_auc)
+    print('-'*20)
+
+    test_loss /= num_batches
+    correct = int(correct)/size
+    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+
+    return test_loss, correct
+
+def evaluate_model(dataloader, model, loss_fn):
+    total_pred = torch.tensor([])
+    total_true = []
+
+    with torch.no_grad():
+        for X, y in dataloader:    
+            pred = model(X)
             test_loss += loss_fn(pred.view(-1, 2), y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
 
             total_pred = torch.cat((total_pred, pred), 0)
             total_true += list(y)
-    print('Eval deaths')
-    print(evaluate_pred(total_pred, total_true)['0'])
-    print('Eval survivors')
-    print(evaluate_pred(total_pred, total_true)['1'])
-    test_loss /= num_batches
-    correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-    return test_loss, correct
+    return evaluate_pred(total_pred, total_true)
