@@ -4,16 +4,13 @@ from torch import nn
 from dataloader import EICUDataSet
 from torch.utils.data import DataLoader
 from models import BaseRecurrent, LayeredRecurrent
+from models import BaseLSTM, BaseGRU
 
 from optimization import train_model, test_loop
 from evaluation import save_plot_loss
 
-if __name__ == '__main__':
-    learning_rate = 1e-5
-    batch_size = 50
-    epochs = 40
-
-    loss_fn =  nn.CrossEntropyLoss()
+def run_train_test(model, model_name, learning_rate, batch_size, epochs):
+    loss_fn =  nn.CrossEntropyLoss(weight=torch.tensor([.8,.2]))
 
     train_data = EICUDataSet('data/eicu_train_x.csv','data/eicu_train_y.csv')
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
@@ -23,12 +20,6 @@ if __name__ == '__main__':
 
     val_data = EICUDataSet('data/eicu_val_x.csv','data/eicu_val_y.csv')
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True)
-
-    model = BaseRecurrent()
-    model_name = 'base_rnn'
-    
-    model = LayeredRecurrent()
-    model_name = 'layered_rnn'
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -51,3 +42,26 @@ if __name__ == '__main__':
         
 
     torch.save(model.state_dict, 'models/'+model_name+'.model')
+    
+
+if __name__ == '__main__':
+    learning_rate = 1e-3
+    batch_size = 256
+    epochs = 40
+
+    model = BaseGRU()
+    model_name = 'base_gru'
+    run_train_test(model, model_name, learning_rate, batch_size, 15)
+    
+    model = BaseRecurrent()
+    model_name = 'base_rnn'
+    run_train_test(model, model_name, learning_rate, batch_size, 15)
+
+    model = LayeredRecurrent()
+    model_name = 'layered_rnn'
+    run_train_test(model, model_name, learning_rate, batch_size, 15)
+    
+    model = BaseLSTM()
+    model_name = 'base_lstm'
+    run_train_test(model, model_name, learning_rate, batch_size, 15)
+
