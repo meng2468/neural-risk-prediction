@@ -10,3 +10,6 @@ evaluation/*
 *.model
 
 *.json
+
+*.txt
+*.log
