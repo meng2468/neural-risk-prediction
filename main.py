@@ -12,16 +12,15 @@ from evaluation import save_plot_loss
 
 def run_train_test(model, model_name, learning_rate, batch_size, epochs):
     print('Running training for '+model_name)
-    # loss_fn =  nn.CrossEntropyLoss(weight=torch.tensor([.8,.2]))
     loss_fn =  nn.BCELoss()
 
-    train_data = EICUDataSet('data/eicu_train_x.csv','data/eicu_train_y.csv')
+    train_data = EICUDataSet('data/eicu/eicu_train_x.csv','data/eicu/eicu_train_y.csv')
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
-    test_data = EICUDataSet('data/eicu_test_x.csv','data/eicu_test_y.csv')
+    test_data = EICUDataSet('data/eicu/eicu_test_x.csv','data/eicu/eicu_test_y.csv')
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
 
-    val_data = EICUDataSet('data/eicu_val_x.csv','data/eicu_val_y.csv')
+    val_data = EICUDataSet('data/eicu/eicu_val_x.csv','data/eicu/eicu_val_y.csv')
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -58,7 +57,7 @@ if __name__ == '__main__':
     epochs = 40
     
     model = BaseGRU()
-    model_name = 'wget -r -N -c -np https://physionet.org/files/challenge-2019/1.0.0/base_gru'
+    model_name = 'base_gru'
     run_train_test(model, model_name, learning_rate, batch_size, 15)
 
     model = LayeredRecurrent()
