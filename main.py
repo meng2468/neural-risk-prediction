@@ -42,7 +42,11 @@ def run_train_test(model, model_name, learning_rate, batch_size, epochs):
         accurracies[1].append(ts_a)
         
         save_plot_loss(losses[0], losses[1], model_name)
-        
+
+        # Early stopping
+        if max(losses[1][-3:]) == losses[1][-1] and len(losses[1]) > 3:
+            print('Stopping model training early', losses)
+            break
         
 
     torch.save(model.state_dict, 'models/'+model_name+'.model')
@@ -52,13 +56,9 @@ if __name__ == '__main__':
     learning_rate = 1e-5
     batch_size = 50
     epochs = 40
-
-    model = BaseRecurrent()
-    model_name = 'base_rnn'
-    run_train_test(model, model_name, learning_rate, batch_size, 15)
     
     model = BaseGRU()
-    model_name = 'base_gru'
+    model_name = 'wget -r -N -c -np https://physionet.org/files/challenge-2019/1.0.0/base_gru'
     run_train_test(model, model_name, learning_rate, batch_size, 15)
 
     model = LayeredRecurrent()
@@ -67,5 +67,9 @@ if __name__ == '__main__':
     
     model = BaseLSTM()
     model_name = 'base_lstm'
+    run_train_test(model, model_name, learning_rate, batch_size, 15)
+
+    model = BaseRecurrent()
+    model_name = 'base_rnn'
     run_train_test(model, model_name, learning_rate, batch_size, 15)
 
