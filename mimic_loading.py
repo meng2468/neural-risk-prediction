@@ -30,7 +30,7 @@ if __name__ == '__main__':
     df_msingles = {}
     for k,v in df_measures.items():
         v = pd.melt(v, id_vars=[v.columns.values[0]], value_vars=list(v.columns.values))
-        v['t'] = v.variable.apply(lambda x: re.findall(k+'\_(\d+)', x)[0])   
+        v['t'] = v.variable.apply(lambda x: int(re.findall(k+'\_(\d+)', x)[0]))   
         v['variable'] = k
         df_msingles[k] = v
     
