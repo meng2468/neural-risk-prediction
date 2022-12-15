@@ -49,7 +49,7 @@ print('Renaming columns and ts')
 df_msingles = {}
 for k,v in df_singles.items():
     v = pd.melt(v, id_vars=[v.columns.values[0]], value_vars=list(v.columns.values))
-    v['t'] = v.variable.apply(lambda x: re.findall('\_(\d+)', x)[0])   
+    v['t'] = v.variable.apply(lambda x: re.findall('\_(\d+)', x)[0]).astype(int) 
     if v['t'].nunique() == 15:
         v['variable'] = k
         df_msingles[k] = v
@@ -90,13 +90,13 @@ df_reformat = df_reformat.set_index('id')
 # In[164]:
 
 print('Saving to csvs')
-df_reformat.to_csv('eicu_prepared_X.csv')
+df_reformat.to_csv('eicu_prepared_x.csv')
 
 
 # In[165]:
 
 
-df_cat.to_csv('eicu_prepared_Y.csv')
+df_cat.to_csv('eicu_prepared_y.csv')
 
 
 # In[ ]:
