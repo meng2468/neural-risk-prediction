@@ -23,7 +23,8 @@ class EICUDataSet(Dataset):
             y = 0
         else:
             y = 1
-        return x, torch.tensor(np.array(y, dtype='f'))
+
+        return x, torch.tensor(np.array([y], dtype='f'))
 
 class MIMICDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
@@ -38,9 +39,7 @@ class MIMICDataSet(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        x = torch.tensor(np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f'))
-        if self.labels.loc[idx]['90_days_survival'] == 'alive':
-            y = 0
-        else:
-            y = 1
-        return x, torch.tensor(np.array(y, dtype='f'))
+        x = torch.tensor(np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f')).nan_to_num(0)
+        y = torch.tensor(self.labels.loc[idx])
+
+        return x, y.float()
