@@ -25,6 +25,7 @@ def evaluate_pred(pred, y_true, model_name, epoch):
     return report, roc_auc
     
 def train_model(dataloader, model, loss_fn, optimizer):
+    model.train()
     size=len(dataloader.dataset)
     total_loss = 0
     correct = 0
@@ -51,7 +52,33 @@ def train_model(dataloader, model, loss_fn, optimizer):
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
     return total_loss.item(), correct
 
+def val_loop(dataloader, model, loss_fn, model_name, epoch):
+    model.eval()
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    val_loss, correct = 0, 0
+
+    total_pred = torch.tensor([])
+    total_true = []
+
+    with torch.no_grad():
+        for X, y in dataloader:    
+            pred = model(X)
+            val_loss += loss_fn(pred, y).item()
+            correct += (torch.round(pred) == y).sum()
+
+            total_pred = torch.cat((total_pred, pred), 0)
+            total_true += list(y)
+    
+    val_loss /= num_batches
+    correct = int(correct)/size
+    print('')
+    print(f"Validation Error: Accuracy: {(100*correct):>0.1f}%, Avg loss: {val_loss:>8f} \n")
+
+    return val_loss, correct
+
 def test_loop(dataloader, model, loss_fn, model_name, epoch):
+    model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     test_loss, correct = 0, 0
@@ -71,31 +98,16 @@ def test_loop(dataloader, model, loss_fn, model_name, epoch):
     y_pred = torch.round(total_pred)
 
     f1, roc_auc = evaluate_pred(y_pred, total_true, model_name, epoch)
-    print('')
+
     print('-'*20)
-    print('Evaluation')
+    print('Running Test Evaluation')
     for k, v in f1.items():
         print(k, v)
+        print('')
     print('ROC AUC:',roc_auc)
     print('-'*20)
 
     test_loss /= num_batches
     correct = int(correct)/size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-
-    return test_loss, correct
-
-def evaluate_model(dataloader, model, loss_fn, model_name):
-    total_pred = torch.tensor([])
-    total_true = []
-
-    with torch.no_grad():
-        for X, y in dataloader:    
-            pred = model(X)
-            test_loss += loss_fn(pred.view(-1, 2), y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-
-            total_pred = torch.cat((total_pred, pred), 0)
-            total_true += list(y)
-
-    return evaluate_pred(total_pred, total_true, model_name)
+    return
