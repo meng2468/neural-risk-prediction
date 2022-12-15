@@ -4,8 +4,8 @@ import sys
 
 from dataloader import EICUDataSet
 from torch.utils.data import DataLoader
-from models import BaseRecurrent, LayeredRecurrent
-from models import BaseLSTM, BaseGRU
+from eicu_models import BaseRecurrent, LayeredRecurrent
+from eicu_models import BaseLSTM, BaseGRU
 
 from optimization import train_model, test_loop
 from evaluation import save_plot_loss
@@ -27,6 +27,7 @@ def run_train_test(model, model_name, learning_rate, batch_size, epochs):
 
     losses = [[],[]]
     accurracies = [[],[]]
+    maxes = 0
     for epoch in range(epochs):
         print('*'*20)
         print('Running Epoch', epoch)
@@ -44,8 +45,10 @@ def run_train_test(model, model_name, learning_rate, batch_size, epochs):
 
         # Early stopping
         if max(losses[1][-3:]) == losses[1][-1] and len(losses[1]) > 3:
-            print('Stopping model training early', losses)
-            break
+            maxes += 1
+            if maxes > 4:
+                print('Stopping model training early', losses)
+                break
         
 
     torch.save(model.state_dict, 'models/'+model_name+'.model')
@@ -54,7 +57,6 @@ def run_train_test(model, model_name, learning_rate, batch_size, epochs):
 if __name__ == '__main__':
     learning_rate = 1e-5
     batch_size = 50
-    epochs = 40
     
     model = BaseGRU()
     model_name = 'base_gru'
