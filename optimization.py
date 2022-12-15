@@ -1,14 +1,27 @@
+import os
+import csv
+
 import numpy as np
 import torch
 from torch import nn
 from sklearn.metrics import classification_report, roc_auc_score
 
-
-def evaluate_pred(pred, y_true):
+def evaluate_pred(pred, y_true, model_name, epoch):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
     report = classification_report(y_true, pred, output_dict=True, zero_division=0)
     roc_auc = roc_auc_score(y_true, pred)
+
+    if 'experiments.csv' not in os.listdir('evaluation/'):
+        with open('evaluation/experiments.csv', 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow(['model','epoch','precision','recall','f1-score','support','roc auc','accuracy'])
+
+
+    with open('evaluation/experiments.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow([model_name,epoch]+[y for _, y in report['macro avg'].items()]+[roc_auc] + [report['accuracy']])
+
     return report, roc_auc
     
 def train_model(dataloader, model, loss_fn, optimizer):
@@ -38,7 +51,7 @@ def train_model(dataloader, model, loss_fn, optimizer):
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
     return total_loss.item(), correct
 
-def test_loop(dataloader, model, loss_fn):
+def test_loop(dataloader, model, loss_fn, model_name, epoch):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     test_loss, correct = 0, 0
@@ -57,7 +70,7 @@ def test_loop(dataloader, model, loss_fn):
 
     y_pred = torch.round(total_pred)
 
-    f1, roc_auc = evaluate_pred(y_pred, total_true)
+    f1, roc_auc = evaluate_pred(y_pred, total_true, model_name, epoch)
     print('')
     print('-'*20)
     print('Evaluation')
@@ -72,7 +85,7 @@ def test_loop(dataloader, model, loss_fn):
 
     return test_loss, correct
 
-def evaluate_model(dataloader, model, loss_fn):
+def evaluate_model(dataloader, model, loss_fn, model_name):
     total_pred = torch.tensor([])
     total_true = []
 
@@ -85,4 +98,4 @@ def evaluate_model(dataloader, model, loss_fn):
             total_pred = torch.cat((total_pred, pred), 0)
             total_true += list(y)
 
-    return evaluate_pred(total_pred, total_true)
+    return evaluate_pred(total_pred, total_true, model_name)

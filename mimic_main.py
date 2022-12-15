@@ -28,11 +28,12 @@ def run_train_test(model, model_name, learning_rate, batch_size):
     losses = [[],[]]
     accurracies = [[],[]]
     maxes = 0
+    epoch = 0
     while True:
         print('*'*20)
         print('Running Epoch', epoch)
         
-        ts_l, ts_a = test_loop(val_loader, model, loss_fn)
+        ts_l, ts_a = test_loop(val_loader, model, loss_fn, model_name, epoch)
         tr_l, tr_a = train_model(train_loader, model, loss_fn, optimizer)
 
         losses[0].append(tr_l)
@@ -46,9 +47,10 @@ def run_train_test(model, model_name, learning_rate, batch_size):
         # Early stopping
         if max(losses[1][-3:]) == losses[1][-1] and len(losses[1]) > 3:
             maxes += 1
-            if maxes > 1:
+            if maxes > 3:
                 print('Stopping model training early', losses)
                 break
+        epoch += 1
         
 
     torch.save(model.state_dict, 'models/'+model_name+'.model')
@@ -59,18 +61,18 @@ if __name__ == '__main__':
     batch_size = 50
     
     model = BaseRecurrent()
-    model_name = 'base_rnn'
+    model_name = 'mimic_base_rnn'
     run_train_test(model, model_name, learning_rate, batch_size)
     
     model = BaseLSTM()
-    model_name = 'base_lstm'
+    model_name = 'mimic_base_lstm'
     run_train_test(model, model_name, learning_rate, batch_size)
 
     model = BaseGRU()
-    model_name = 'base_gru'
+    model_name = 'mimic_base_gru'
     run_train_test(model, model_name, learning_rate, batch_size)
 
     model = LayeredRecurrent()
-    model_name = 'layered_rnn'
+    model_name = 'mimic_layered_rnn'
     run_train_test(model, model_name, learning_rate, batch_size)
 
