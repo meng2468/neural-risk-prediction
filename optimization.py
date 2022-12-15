@@ -5,8 +5,9 @@ from sklearn.metrics import classification_report, roc_auc_score
 
 
 def evaluate_pred(pred, y_true):
-    y_pred = torch.argmax(pred, dim=1)
-    report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    y_true = [int(x) for x in y_true]
+    pred = [int(x) for x in pred]
+    report = classification_report(y_true, pred, output_dict=True, zero_division=0)
     roc_auc = roc_auc_score(y_true, pred)
     return report, roc_auc
     
@@ -18,16 +19,16 @@ def train_model(dataloader, model, loss_fn, optimizer):
     for batch, (X, y) in enumerate(dataloader):
         pred = model(X)
 
-        loss = loss_fn(pred.view(-1), y)
+        loss = loss_fn(pred, y)
         total_loss += loss
-        correct += (torch.round(pred.view(-1)) == y).sum()
+        correct += (torch.round(pred) == y).sum()
 
         # Backpropagation
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        if batch % 50 == 0:
+        if batch % 20 == 0:
             # print(pred, y), loss
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
@@ -48,8 +49,8 @@ def test_loop(dataloader, model, loss_fn):
     with torch.no_grad():
         for X, y in dataloader:    
             pred = model(X)
-            test_loss += loss_fn(pred.view(-1), y).item()
-            correct += (torch.round(pred.view(-1)) == y).sum()
+            test_loss += loss_fn(pred, y).item()
+            correct += (torch.round(pred) == y).sum()
 
             total_pred = torch.cat((total_pred, pred), 0)
             total_true += list(y)
