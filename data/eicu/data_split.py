@@ -19,9 +19,9 @@ def reset_ids(df):
     df = df.set_index('id')
     return df
 
-reset_ids(data_x.loc[train]).to_csv('data/eicu/eicu_train_x.csv')
-reset_ids(data_x.loc[test]).to_csv('data/eicu/eicu_test_x.csv')
-reset_ids(data_x.loc[val]).to_csv('data/eicu/eicu_val_x.csv')
+reset_ids(data_x.loc[train]).groupby(by=['id','t']).value.apply(list).unstack().to_csv('data/eicu/eicu_train_x.csv')
+reset_ids(data_x.loc[test]).groupby(by=['id','t']).value.apply(list).unstack().to_csv('data/eicu/eicu_test_x.csv')
+reset_ids(data_x.loc[val]).groupby(by=['id','t']).value.apply(list).unstack().to_csv('data/eicu/eicu_val_x.csv')
 
 reset_ids(labels.loc[train]).to_csv('data/eicu/eicu_train_y.csv')
 reset_ids(labels.loc[test]).to_csv('data/eicu/eicu_test_y.csv')
