@@ -11,6 +11,7 @@ from optimization import train_model, test_loop, val_loop
 from evaluation import save_plot_loss
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print('Running on device', device)
 
 def run_train_test(model, model_name, learning_rate, batch_size):
     print('Running training for '+model_name)
