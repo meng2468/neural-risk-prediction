@@ -6,6 +6,8 @@ import torch
 from torch import nn
 from sklearn.metrics import classification_report, roc_auc_score
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 def evaluate_pred(pred, y_true, model_name, epoch):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
@@ -58,7 +60,7 @@ def val_loop(dataloader, model, loss_fn, model_name, epoch):
     num_batches = len(dataloader)
     val_loss, correct = 0, 0
 
-    total_pred = torch.tensor([])
+    total_pred = torch.tensor([]).to(device)
     total_true = []
 
     with torch.no_grad():
@@ -83,7 +85,7 @@ def test_loop(dataloader, model, loss_fn, model_name, epoch):
     num_batches = len(dataloader)
     test_loss, correct = 0, 0
 
-    total_pred = torch.tensor([])
+    total_pred = torch.tensor([]).to(device)
     total_true = []
 
     with torch.no_grad():

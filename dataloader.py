@@ -7,6 +7,8 @@ from torch.utils.data import Dataset, DataLoader
 
 import ast
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 class EICUDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
         self.data_x = pd.read_csv(csv_file_x,index_col='id')
@@ -28,7 +30,7 @@ class EICUDataSet(Dataset):
         else:
             y = 1
 
-        return x, torch.tensor(np.array([y], dtype='f'))
+        return x.to(device), torch.tensor(np.array([y], dtype='f')).to(device)
 
 class MIMICDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
@@ -47,4 +49,4 @@ class MIMICDataSet(Dataset):
         x = torch.stack([torch.tensor(y) for y in x])        
         y = torch.tensor([self.labels['90_days_survival'].loc[idx]]).float()
 
-        return x, y
+        return x.to(device), y.to(device)
