@@ -5,11 +5,13 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
 
+import ast
+
 class EICUDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
         self.data_x = pd.read_csv(csv_file_x,index_col='id')
         self.labels = pd.read_csv(csv_file_y, index_col='id')
-        self.times = self.data_x.t.unique()
+        self.times = self.data_x.columns.values
     
     def __len__(self):
         return len(self.labels)
@@ -18,7 +20,9 @@ class EICUDataSet(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        x = torch.tensor(np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f'))
+        x = self.data_x.iloc[idx].apply(ast.literal_eval).values
+        x = torch.stack([torch.tensor(y) for y in x])
+
         if self.labels.loc[idx]['survival_90days'] == 'alive':
             y = 0
         else:
@@ -30,7 +34,7 @@ class MIMICDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
         self.data_x = pd.read_csv(csv_file_x, index_col='id')
         self.labels = pd.read_csv(csv_file_y, index_col='id')
-        self.times = self.data_x.t.unique()
+        self.times = self.data_x.columns.values
     
     def __len__(self):
         return len(self.labels)
@@ -39,7 +43,8 @@ class MIMICDataSet(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        x = torch.tensor(np.array([self.data_x.loc[idx].query('t == '+str(x)).value.values for x in self.times], dtype='f')).nan_to_num(0)
-        y = torch.tensor(self.labels.loc[idx])
+        x = self.data_x.iloc[idx].apply(ast.literal_eval).values
+        x = torch.stack([torch.tensor(y) for y in x])        
+        y = torch.tensor([self.labels['90_days_survival'].loc[idx]]).float()
 
-        return x, y.float()
+        return x, y
