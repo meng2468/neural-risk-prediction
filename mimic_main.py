@@ -10,6 +10,8 @@ from mimic_models import BaseLSTM, BaseGRU
 from optimization import train_model, val_loop, test_loop
 from evaluation import save_plot_loss
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 def run_train_test(model, model_name, learning_rate, batch_size):
     print('Running training for '+model_name)
     loss_fn =  nn.BCELoss()
@@ -63,22 +65,20 @@ def run_train_test(model, model_name, learning_rate, batch_size):
     test_loop(test_loader, model, loss_fn, model_name, epoch)
 
 if __name__ == '__main__':
-    learning_rate = 1e-3
+    learning_rates = [1e-2,5e-3,1e-3,5e-4,1e-4,5e-5]
     batch_size = 50
-    
-    model = BaseRecurrent()
-    model_name = 'mimic_base_rnn'
-    run_train_test(model, model_name, learning_rate, batch_size)
-    
-    model = BaseLSTM()
-    model_name = 'mimic_base_lstm'
-    run_train_test(model, model_name, learning_rate, batch_size)
 
-    model = BaseGRU()
-    model_name = 'mimic_base_gru'
-    run_train_test(model, model_name, learning_rate, batch_size)
+    for learning_rate in learning_rates:
+        model = BaseGRU().to(device)
+        model_name = 'mimic_base_gru'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
 
-    # model = LayeredRecurrent()
-    # model_name = 'mimic_layered_rnn'
-    # run_train_test(model, model_name, learning_rate, batch_size)
+        model = BaseLSTM().to('device')
+        model_name = 'mimic_base_lstm'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
+
+        model = BaseRecurrent().to('device')
+        model_name = 'mimic_base_rnn'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
+
 

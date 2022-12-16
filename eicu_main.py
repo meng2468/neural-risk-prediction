@@ -10,6 +10,7 @@ from eicu_models import BaseLSTM, BaseGRU
 from optimization import train_model, test_loop, val_loop
 from evaluation import save_plot_loss
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def run_train_test(model, model_name, learning_rate, batch_size):
     print('Running training for '+model_name)
@@ -30,6 +31,7 @@ def run_train_test(model, model_name, learning_rate, batch_size):
     accurracies = [[],[]]
     maxes = 0
     epoch = 0
+
     while True:
         print('*'*20)
         print('Running Epoch', epoch)
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     batch_size = 50
     
     for learning_rate in learning_rates:
-        model = BaseGRU()
+        model = BaseGRU().to(device)
         model_name = 'eicu_base_gru'+str(learning_rate)
         run_train_test(model, model_name, learning_rate, batch_size)
 
@@ -77,11 +79,11 @@ if __name__ == '__main__':
         # model_name = 'eicu_layered_rnn'
         # run_train_test(model, model_name, learning_rate, batch_size)
         
-        model = BaseLSTM()
+        model = BaseLSTM().to('device')
         model_name = 'eicu_base_lstm'+str(learning_rate)
         run_train_test(model, model_name, learning_rate, batch_size)
 
-        model = BaseRecurrent()
+        model = BaseRecurrent().to('device')
         model_name = 'eicu_base_rnn'+str(learning_rate)
         run_train_test(model, model_name, learning_rate, batch_size)
 
