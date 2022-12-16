@@ -80,11 +80,11 @@ if __name__ == '__main__':
         # model_name = 'eicu_layered_rnn'
         # run_train_test(model, model_name, learning_rate, batch_size)
         
-        model = BaseLSTM().to('device')
+        model = BaseLSTM().to(device)
         model_name = 'eicu_base_lstm'+str(learning_rate)
         run_train_test(model, model_name, learning_rate, batch_size)
 
-        model = BaseRecurrent().to('device')
+        model = BaseRecurrent().to(device)
         model_name = 'eicu_base_rnn'+str(learning_rate)
         run_train_test(model, model_name, learning_rate, batch_size)
 
