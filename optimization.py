@@ -11,7 +11,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 def evaluate_pred(pred, y_true, model_name, epoch):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
-    report = classification_report(y_true, pred, output_dict=True, zero_division=0)
+    report = classification_report(y_true, pred, output_dict=True)
     roc_auc = roc_auc_score(y_true, pred)
 
     if 'experiments.csv' not in os.listdir('evaluation/'):
