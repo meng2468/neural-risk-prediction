@@ -10,6 +10,7 @@ from eicu_models import BaseLSTM, BaseGRU
 from optimization import train_model, test_loop, val_loop
 from evaluation import save_plot_loss
 
+
 def run_train_test(model, model_name, learning_rate, batch_size):
     print('Running training for '+model_name)
     loss_fn =  nn.BCELoss()
@@ -62,24 +63,25 @@ def run_train_test(model, model_name, learning_rate, batch_size):
     model.load_state_dict(torch.load('models/'+model_name+'.model'))
     test_loop(test_loader, model, loss_fn, model_name, epoch)
     
-
 if __name__ == '__main__':
-    learning_rate = 1e-3
+    learning_rates = [1e-2,5e-3,1e-3,5e-4,1e-4,5e-5]
+    # learning_rate = 1e-3
     batch_size = 50
     
-    model = BaseGRU()
-    model_name = 'eicu_base_gru'
-    run_train_test(model, model_name, learning_rate, batch_size)
+    for learning_rate in learning_rates:
+        model = BaseGRU()
+        model_name = 'eicu_base_gru'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
 
-    # model = LayeredRecurrent()
-    # model_name = 'eicu_layered_rnn'
-    # run_train_test(model, model_name, learning_rate, batch_size)
-    
-    model = BaseLSTM()
-    model_name = 'eicu_base_lstm'
-    run_train_test(model, model_name, learning_rate, batch_size)
+        # model = LayeredRecurrent()
+        # model_name = 'eicu_layered_rnn'
+        # run_train_test(model, model_name, learning_rate, batch_size)
+        
+        model = BaseLSTM()
+        model_name = 'eicu_base_lstm'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
 
-    model = BaseRecurrent()
-    model_name = 'eicu_base_rnn'
-    run_train_test(model, model_name, learning_rate, batch_size)
+        model = BaseRecurrent()
+        model_name = 'eicu_base_rnn'+str(learning_rate)
+        run_train_test(model, model_name, learning_rate, batch_size)
 
