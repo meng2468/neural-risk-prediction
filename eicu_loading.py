@@ -9,7 +9,7 @@ import os
 
 file_name = os.path.join('../Data/eicu',os.listdir('../Data/eicu')[0])
 
-
+print('Pulling data', file_name)
 # In[3]:
 
 

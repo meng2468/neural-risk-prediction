@@ -5,9 +5,10 @@ import re
 from sklearn import preprocessing
 
 if __name__ == '__main__':
-    file_name = os.path.join('../Data/mimiiciv',os.listdir('../Data/mimiiciv')[0])
+    file_name = os.path.join('../Data/mimiiciv',os.listdir('../Data/mimiiciv')[1])
 
-    df = pd.read_excel(file_name)
+    print('Pulling data', file_name)
+    df = pd.read_csv(file_name)
 
     # Extract and format time series data
 
@@ -53,9 +54,9 @@ if __name__ == '__main__':
 
     # Select only categorical and add time taken between arrival and departure
     df_cat = df.drop(columns=list(ts_features)+intervention)
-    df_cat['admit_out'] = (df_cat['outtime'] - df_cat['admittime']).dt.total_seconds()/86400
-    df_cat['in_out'] = (df_cat['outtime'] - df_cat['intime']).dt.total_seconds()/86400
-    df_cat = df_cat.drop(columns=['onsettime', 'admittime','intime','outtime', 'hadm_id','subject_id','90_days_survival'])
+    # df_cat['admit_out'] = (df_cat['outtime'] - df_cat['admittime']).dt.total_seconds()/86400
+    # df_cat['in_out'] = (df_cat['outtime'] - df_cat['intime']).dt.total_seconds()/86400
+    df_cat = df_cat.drop(columns=['onsettime', 'admittime','intime','outtime', 'hadm_id','subject_id','_days_survival'])
 
     # Reformat non-numerical data
     nn_columns = ['gender','ethnicity']
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     df_final_x = pd.concat([df_t_pheno, df_cat_pheno]).sort_values(by=['stay_id','t','variable'])
 
     # Take patient survival and stay id and store to final labels
-    df_final_y = df[['stay_id', '90_days_survival']].replace({'alive':0, 'death':1})
+    df_final_y = df[['stay_id', '_days_survival']].replace({'alive':0, 'death':1})
 
     df_final_x.to_csv('mimic_prepared_x.csv', index=False)
     df_final_y.to_csv('mimic_prepared_y.csv', index=False)
