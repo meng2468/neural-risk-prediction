@@ -85,15 +85,15 @@ if __name__ == '__main__':
             params['iteration'] = i
 
             model = BaseGRU().to(device)
-            params['model_name'] = 'eicu_base_gru'
+            params['model_name'] = 'mimic_base_gru'
             run_train_test(model, params)
             
             model = BaseLSTM().to(device)
-            params['model_name'] = 'eicu_base_lstm'
+            params['model_name'] = 'mimic_base_lstm'
             run_train_test(model, params)
 
             model = BaseRecurrent().to(device)
-            params['model_name'] = 'eicu_base_rnn'     
+            params['model_name'] = 'mimic_base_rnn'     
             run_train_test(model, params)
 
 
