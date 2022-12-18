@@ -118,4 +118,9 @@ def test_loop(dataloader, model, loss_fn, params, wandb):
     test_loss /= num_batches
     correct = int(correct)/size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+
+    wandb.alert(
+        title='Model Completed Evaluation',
+        text=params['model_name'] + ' finished training with ROC ' + str(roc_auc) + ' and loss of ' + str(test_loss)
+    )
     return
