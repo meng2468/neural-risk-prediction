@@ -28,7 +28,7 @@ def evaluate_pred(pred, y_true, params, wandb):
         store += [roc_auc]+[report['accuracy']]
         writer.writerow(store)
 
-    wandb.log(dict(list(report['macro avg'].items()) + list({'roc auc': roc_auc}).items()))
+    wandb.log(dict(list(report['macro avg'].items()) + list({'roc auc': roc_auc}.items())))
     return report, roc_auc
     
 def train_model(dataloader, model, loss_fn, optimizer):
