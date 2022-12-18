@@ -8,21 +8,25 @@ from sklearn.metrics import classification_report, roc_auc_score
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def evaluate_pred(pred, y_true, model_name, epoch):
+def evaluate_pred(pred, y_true, params):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
     report = classification_report(y_true, pred, output_dict=True)
     roc_auc = roc_auc_score(y_true, pred)
 
+    # Store model performance in a csv
     if 'experiments.csv' not in os.listdir('evaluation/'):
         with open('evaluation/experiments.csv', 'a') as f:
             writer = csv.writer(f)
-            writer.writerow(['model','epoch','precision','recall','f1-score','support','roc auc','accuracy'])
+            writer.writerow(list(params.keys()) + ['precision','recall','f1-score','support','roc auc','accuracy'])
 
 
     with open('evaluation/experiments.csv', 'a') as f:
         writer = csv.writer(f)
-        writer.writerow([model_name,epoch]+[y for _, y in report['macro avg'].items()]+[roc_auc] + [report['accuracy']])
+        store = [v for _, v in params.items()]
+        store += [y for _, y in report['macro avg'].items()]
+        store += [roc_auc]+[report['accuracy']]
+        writer.writerow(store)
 
     return report, roc_auc
     
@@ -54,7 +58,7 @@ def train_model(dataloader, model, loss_fn, optimizer):
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
     return total_loss.item(), correct
 
-def val_loop(dataloader, model, loss_fn, model_name, epoch):
+def val_loop(dataloader, model, loss_fn):
     model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -79,7 +83,7 @@ def val_loop(dataloader, model, loss_fn, model_name, epoch):
 
     return val_loss, correct
 
-def test_loop(dataloader, model, loss_fn, model_name, epoch):
+def test_loop(dataloader, model, loss_fn, params):
     model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -99,7 +103,7 @@ def test_loop(dataloader, model, loss_fn, model_name, epoch):
 
     y_pred = torch.round(total_pred)
 
-    f1, roc_auc = evaluate_pred(y_pred, total_true, model_name, epoch)
+    f1, roc_auc = evaluate_pred(y_pred, total_true, params)
 
     print('-'*20)
     print('Running Test Evaluation')
