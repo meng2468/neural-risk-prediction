@@ -70,19 +70,20 @@ if __name__ == '__main__':
     learning_rates = [1e-2,5e-3,1e-3,5e-4,1e-4,5e-5]
     batch_size = 50
 
-    for learning_rate in learning_rates:
-        params = {'learning_rate': learning_rate, 'batch_size': batch_size}
+    for i in range(5):
+        for learning_rate in learning_rates:
+            params = {'learning_rate': learning_rate, 'batch_size': batch_size}
 
-        model = BaseGRU().to(device)
-        params['model_name'] = 'eicu_base_gru'
-        run_train_test(model, params)
-        
-        model = BaseLSTM().to(device)
-        params['model_name'] = 'eicu_base_lstm'
-        run_train_test(model, params)
+            model = BaseGRU().to(device)
+            params['model_name'] = 'eicu_base_gru'
+            run_train_test(model, params)
+            
+            model = BaseLSTM().to(device)
+            params['model_name'] = 'eicu_base_lstm'
+            run_train_test(model, params)
 
-        model = BaseRecurrent().to(device)
-        params['model_name'] = 'eicu_base_rnn'     
-        run_train_test(model, params)
+            model = BaseRecurrent().to(device)
+            params['model_name'] = 'eicu_base_rnn'     
+            run_train_test(model, params)
 
 
