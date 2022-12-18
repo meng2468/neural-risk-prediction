@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Which dataset to run for (m)imic / (e)icu?";
+echo "Which dataset to run for (m)imic / (e)icu / (b) both?";
 read data;
 echo "What do you want to call the experiments?"
 read experiment;
@@ -11,6 +11,11 @@ python eicu_main.py
 elif [ $data == "m" ]; then
 echo "Bash: Running mimic_main.py"
 python mimic_main.py
+elif [ $data == "b" ]; then
+echo "Bash: Running both mimic_main.py and eicu_main.py in parallel"
+python mimic_main.py &
+python eicu_main.py &
+wait
 else
 echo "$data is not either option, skipping"
 exit 1
