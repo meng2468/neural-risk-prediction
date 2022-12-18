@@ -13,3 +13,5 @@ evaluation/*
 
 *.txt
 *.log
+
+wandb/*
