@@ -10,10 +10,16 @@ from mimic_models import BaseLSTM, BaseGRU
 from optimization import train_model, val_loop, test_loop
 from evaluation import save_plot_loss
 
+import wandb
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print('Running on device', device)
 
 def run_train_test(model, params):
+    run = wandb.init(project="mimic-baselines", entity="risk-prediction", config=params, reinit=True)
+    wandb.run.name = params['model_name']+ '_' + wandb.run.id
+    wandb.run.save()
+
     print('Running training for '+params['model_name'])
     loss_fn =  nn.BCELoss()
 
@@ -36,8 +42,9 @@ def run_train_test(model, params):
     while True:
         print('*'*20)
         print('Running Epoch', epoch)
-        
+        tr_l, tr_a = -1, -1
         val_l, val_a = val_loop(val_loader, model, loss_fn)
+        wandb.log({'Val Loss': val_l, 'Val Accuracy': val_a})
         accurracies[1].append(val_a)
         losses[1].append(val_l)
         
@@ -46,6 +53,7 @@ def run_train_test(model, params):
             torch.save(model.state_dict(), 'models/'+params['model_name']+'.model')
             
         tr_l, tr_a = train_model(train_loader, model, loss_fn, optimizer)
+        wandb.log({'Train Loss': tr_l, 'Train Accuracy': tr_a}, commit=False)
         accurracies[0].append(tr_a)
         losses[0].append(tr_l)
         
@@ -64,7 +72,8 @@ def run_train_test(model, params):
             break
 
     model.load_state_dict(torch.load('models/'+params['model_name']+'.model'))
-    test_loop(test_loader, model, loss_fn, params)
+    test_loop(test_loader, model, loss_fn, params, wandb)
+    run.finish()
 
 if __name__ == '__main__':
     learning_rates = [1e-2,5e-3,1e-3,5e-4,1e-4,5e-5]
@@ -73,6 +82,7 @@ if __name__ == '__main__':
     for i in range(5):
         for learning_rate in learning_rates:
             params = {'learning_rate': learning_rate, 'batch_size': batch_size}
+            params['iteration'] = i
 
             model = BaseGRU().to(device)
             params['model_name'] = 'eicu_base_gru'

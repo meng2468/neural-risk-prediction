@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, roc_auc_score
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def evaluate_pred(pred, y_true, params):
+def evaluate_pred(pred, y_true, params, wandb):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
     report = classification_report(y_true, pred, output_dict=True)
@@ -28,6 +28,7 @@ def evaluate_pred(pred, y_true, params):
         store += [roc_auc]+[report['accuracy']]
         writer.writerow(store)
 
+    wandb.log(report['macro avg'] | {'roc auc': roc_auc})
     return report, roc_auc
     
 def train_model(dataloader, model, loss_fn, optimizer):
@@ -55,6 +56,7 @@ def train_model(dataloader, model, loss_fn, optimizer):
 
     total_loss /= len(dataloader)
     correct = int(correct)/size
+
     print(f"Train  Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {total_loss:>8f} \n")
     return total_loss.item(), correct
 
@@ -83,7 +85,7 @@ def val_loop(dataloader, model, loss_fn):
 
     return val_loss, correct
 
-def test_loop(dataloader, model, loss_fn, params):
+def test_loop(dataloader, model, loss_fn, params, wandb):
     model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -103,7 +105,7 @@ def test_loop(dataloader, model, loss_fn, params):
 
     y_pred = torch.round(total_pred)
 
-    f1, roc_auc = evaluate_pred(y_pred, total_true, params)
+    f1, roc_auc = evaluate_pred(y_pred, total_true, params, wandb)
 
     print('-'*20)
     print('Running Test Evaluation')
