@@ -123,4 +123,4 @@ def test_loop(dataloader, model, loss_fn, params, wandb):
     #     title='Model Completed Evaluation',
     #     text=params['model_name'] + ' finished training with ROC ' + str(roc_auc) + ' and loss of ' + str(test_loss)
     # )
-    return
+    return f1['macro avg']['f1-score'], roc_auc
