@@ -15,8 +15,8 @@ import wandb
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print('Running on device', device)
 
-def run_train_test(model, params):
-    run = wandb.init(project="eicu-baselines", entity="risk-prediction", config=params, reinit=True)
+def run_train_test(model, params, experiment_name):
+    run = wandb.init(project=experiment_name, entity="risk-prediction", config=params, reinit=True)
     wandb.run.name = params['model_name']+ '_' + wandb.run.id
     wandb.run.save()
 
@@ -68,7 +68,7 @@ def run_train_test(model, params):
                 break
         epoch += 1
 
-        if epoch >= 15:
+        if epoch >= 50:
             break
 
     model.load_state_dict(torch.load('models/'+params['model_name']+'.model'))
@@ -76,7 +76,8 @@ def run_train_test(model, params):
     run.finish()
 
 if __name__ == '__main__':
-    learning_rates = [1e-2,5e-3,1e-3,5e-4,1e-4,5e-5, 1e-5]
+    experiment_name = 'eicu-uncapped-epochs'
+    learning_rates = [5e-4,1e-4,5e-5, 1e-5]
     batch_size = 50
     
     for i in range(5):
@@ -87,16 +88,16 @@ if __name__ == '__main__':
             model = BaseGRU().to(device)
             model_name = 'eicu_base_gru'
             params['model_name'] = model_name
-            run_train_test(model, params)
+            run_train_test(model, params, experiment_name)
             
             model = BaseLSTM().to(device)
             model_name = 'eicu_base_lstm'
             params['model_name'] = model_name
-            run_train_test(model, params)
+            run_train_test(model, params, experiment_name)
 
             model = BaseRecurrent().to(device)
             model_name = 'eicu_base_rnn'
             params['model_name'] = model_name
-            run_train_test(model, params)
+            run_train_test(model, params, experiment_name)
 
 
