@@ -81,7 +81,7 @@ if __name__ == '__main__':
     learning_rates = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     batch_size = 50
 
-    for i in range(5):
+    for i in range(3):
         for learning_rate in learning_rates:
             params = {'learning_rate': learning_rate, 'batch_size': batch_size}
             params['iteration'] = i
@@ -97,5 +97,8 @@ if __name__ == '__main__':
             model = BaseRecurrent().to(device)
             params['model_name'] = 'mimic_base_rnn'     
             run_train_test(model, params, experiment_name)
-
-
+            
+        wandb.alert(
+            title=experiment_name+' done with iteration ' +str(i+1) + ' of ' + str(3),
+            text=''
+        )

@@ -4,7 +4,7 @@ import sys
 
 from dataloader import EICUDataSet
 from torch.utils.data import DataLoader
-from eicu_models import BaseRecurrent, LayeredRecurrent
+from eicu_models import BaseRecurrent
 from eicu_models import BaseLSTM, BaseGRU
 
 from optimization import train_model, test_loop, val_loop
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     learning_rates = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     batch_size = 50
     
-    for i in range(2):
+    for i in range(3):
         for learning_rate in learning_rates:
             params = {'learning_rate': learning_rate, 'batch_size': batch_size, 'iteration':i}
             params['iteration'] = i
@@ -101,4 +101,8 @@ if __name__ == '__main__':
             params['model_name'] = model_name
             run_train_test(model, params, experiment_name)
 
+        wandb.alert(
+            title=experiment_name+' done with iteration ' +str(i+1) + ' of ' + str(3),
+            text=''
+        )
 
