@@ -68,7 +68,8 @@ def run_train_test(model, params, experiment_name):
                 break
         epoch += 1
 
-        if epoch >= 50:
+        if epoch >= 300:
+            print("Stopping model training early, max epochs")
             break
 
     model.load_state_dict(torch.load('models/'+params['model_name']+'.model'))
@@ -76,11 +77,11 @@ def run_train_test(model, params, experiment_name):
     run.finish()
 
 if __name__ == '__main__':
-    experiment_name = 'eicu-uncapped-epochs'
-    learning_rates = [5e-4,1e-4,5e-5, 1e-5]
+    experiment_name = 'eicu-dropout'
+    learning_rates = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     batch_size = 50
     
-    for i in range(5):
+    for i in range(2):
         for learning_rate in learning_rates:
             params = {'learning_rate': learning_rate, 'batch_size': batch_size, 'iteration':i}
             params['iteration'] = i
