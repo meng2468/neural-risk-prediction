@@ -97,8 +97,8 @@ if __name__ == '__main__':
             model = BaseRecurrent().to(device)
             params['model_name'] = 'mimic_base_rnn'     
             run_train_test(model, params, experiment_name)
-            
+
         wandb.alert(
-            title=experiment_name+' done with iteration ' +str(i+1) + ' of ' + str(3),
-            text=''
+            title='Experiment iteration complete',
+            text=experiment_name+' done with iteration ' +str(i+1) + ' of ' + str(3)
         )
