@@ -4,7 +4,7 @@ import sys
 
 from dataloader import MIMICDataSet
 from torch.utils.data import DataLoader
-from mimic_models import BaseRecurrent, LayeredRecurrent
+from mimic_models import BaseRecurrent
 from mimic_models import BaseLSTM, BaseGRU
 
 from optimization import train_model, val_loop, test_loop
