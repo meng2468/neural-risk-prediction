@@ -77,7 +77,7 @@ def run_train_test(model, params, experiment_name):
     run.finish()
 
 if __name__ == '__main__':
-    experiment_name = 'eicu-dropout-512'
+    experiment_name = 'eicu-256'
     learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     batch_size = 50
     
