@@ -86,7 +86,7 @@ if __name__ == '__main__':
     for dropout in dropouts:
         for hidden_size in hidden_sizes:
             for learning_rate in learning_rates:
-                params = {'learning_rate': learning_rate, 'batch_size': batch_size, 'iteration':i}
+                params = {'learning_rate': learning_rate, 'batch_size': batch_size}
                 params['hidden_size'] = hidden_size
                 params['dropout'] = dropout
                 
