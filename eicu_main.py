@@ -101,8 +101,3 @@ if __name__ == '__main__':
             params['model_name'] = model_name
             run_train_test(model, params, experiment_name)
 
-        wandb.alert(
-            title='Experiment iteration complete',
-            text=experiment_name+' done with iteration ' +str(i+1) + ' of ' + str(3)
-        )
-
