@@ -77,31 +77,57 @@ def run_train_test(model, params, experiment_name):
     run.finish()
 
 if __name__ == '__main__':
-    experiment_name = 'eicu-diff-architectures'
-    hidden_sizes = [128, 256, 512, 1024]
-    learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5,1e-5]
-    dropouts = [0, 0.25, 0.5]
-    batch_size = 50
+    experiment_name = '22-12-test'
     
-    for dropout in dropouts:
-        for hidden_size in hidden_sizes:
-            for learning_rate in learning_rates:
-                params = {'learning_rate': learning_rate, 'batch_size': batch_size}
-                params['hidden_size'] = hidden_size
-                params['dropout'] = dropout
-                
-                model = BaseGRU(h_size=hidden_size, dropout=dropout).to(device)
-                model_name = 'eicu_base_gru'
-                params['model_name'] = model_name
-                run_train_test(model, params, experiment_name)
-                
-                model = BaseLSTM(h_size=hidden_size, dropout=dropout).to(device)
-                model_name = 'eicu_base_lstm'
-                params['model_name'] = model_name
-                run_train_test(model, params, experiment_name)
+    params = {'learning_rate': 5e-4, 'batch_size': 50}
+    params['hidden_size'] = 512
+    params['dropout'] = 0
 
-                model = BaseRecurrent(h_size=hidden_size, dropout=dropout).to(device)
-                model_name = 'eicu_base_rnn'
-                params['model_name'] = model_name
-                run_train_test(model, params, experiment_name)
+    for i in range(5):
+        params['iteration'] = i
+        model = BaseGRU(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model_name = 'eicu_base_gru'
+        params['model_name'] = model_name
+        run_train_test(model, params, experiment_name)
+
+        params['learning_rate'] = 1e-4
+        model = BaseLSTM(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model_name = 'eicu_base_lstm'
+        params['model_name'] = model_name
+        run_train_test(model, params, experiment_name)
+
+        params['learning_rate'] = 5e-4
+        params['dropout'] = .25
+        model = BaseRecurrent(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model_name = 'eicu_base_rnn'
+        params['model_name'] = model_name
+        run_train_test(model, params, experiment_name)
+
+    # experiment_name = '22-12-test'
+    # hidden_sizes = [128, 256, 512, 1024]
+    # learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5,1e-5]
+    # dropouts = [0, 0.25, 0.5]
+    # batch_size = 50
+    
+    # for dropout in dropouts:
+    #     for hidden_size in hidden_sizes:
+    #         for learning_rate in learning_rates:
+    #             params = {'learning_rate': learning_rate, 'batch_size': batch_size}
+    #             params['hidden_size'] = hidden_size
+    #             params['dropout'] = dropout
+                
+    #             model = BaseGRU(h_size=hidden_size, dropout=dropout).to(device)
+    #             model_name = 'eicu_base_gru'
+    #             params['model_name'] = model_name
+    #             run_train_test(model, params, experiment_name)
+                
+    #             model = BaseLSTM(h_size=hidden_size, dropout=dropout).to(device)
+    #             model_name = 'eicu_base_lstm'
+    #             params['model_name'] = model_name
+    #             run_train_test(model, params, experiment_name)
+
+    #             model = BaseRecurrent(h_size=hidden_size, dropout=dropout).to(device)
+    #             model_name = 'eicu_base_rnn'
+    #             params['model_name'] = model_name
+    #             run_train_test(model, params, experiment_name)
 
