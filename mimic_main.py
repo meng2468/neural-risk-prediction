@@ -86,7 +86,7 @@ if __name__ == '__main__':
         print('Running training for', run_type)
 
     experiment_name = 'mimic-larger-arch'
-    hidden_sizes = [1024, 2046, 4092]
+    hidden_sizes = [8192, 16384]
     learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5,1e-5]
     dropouts = [0, 0.25, 0.5]
     batch_size = 50
