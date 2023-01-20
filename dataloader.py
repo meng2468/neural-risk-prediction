@@ -25,11 +25,6 @@ class EICUDataSet(Dataset):
         x = self.data_x.iloc[idx].apply(ast.literal_eval).values
         x = torch.stack([torch.tensor(y) for y in x])
 
-        if self.labels.loc[idx]['survival_90days'] == 'alive':
-            y = 0
-        else:
-            y = 1
-
         return x.to(device), torch.tensor(np.array([y], dtype='f')).to(device)
 
 class MIMICDataSet(Dataset):
