@@ -24,6 +24,7 @@ class EICUDataSet(Dataset):
         
         x = self.data_x.iloc[idx].apply(ast.literal_eval).values
         x = torch.stack([torch.tensor(y) for y in x])
+        y = torch.tensor([self.labels['survival_90days'].loc[idx]]).float()
 
         return x.to(device), torch.tensor(np.array([y], dtype='f')).to(device)
 
