@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-data_x = pd.read_csv('data/eicu/eicu_prepared_x.csv',index_col='patientunitstayid')
+data_x = pd.read_csv('data/eicu/eicu_prepared_x.csv',index_col='patientunitstayid').fillna(0)
 labels = pd.read_csv('data/eicu/eicu_prepared_y.csv', index_col='patientunitstayid')
 
 train, test = train_test_split(data_x.index.unique(), train_size=.75, stratify=labels.survival_90days)
