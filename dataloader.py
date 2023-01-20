@@ -26,7 +26,7 @@ class EICUDataSet(Dataset):
         x = torch.stack([torch.tensor(y) for y in x])
         y = torch.tensor([self.labels['survival_90days'].loc[idx]]).float()
 
-        return x.to(device), torch.tensor(np.array([y], dtype='f')).to(device)
+        return x.to(device), y.to(device)
 
 class MIMICDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):
