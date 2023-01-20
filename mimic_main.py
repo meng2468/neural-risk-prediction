@@ -4,8 +4,8 @@ import sys
 
 from dataloader import MIMICDataSet
 from torch.utils.data import DataLoader
-from mimic_models import BaseRecurrent
-from mimic_models import BaseLSTM, BaseGRU
+from models import BaseRecurrent
+from models import BaseLSTM, BaseGRU
 
 from optimization import train_model, val_loop, test_loop
 from evaluation import save_plot_loss
@@ -85,10 +85,11 @@ if __name__ == '__main__':
         run_type = ' '.join(sys.argv[1:])
         print('Running training for', run_type)
 
-    experiment_name = 'mimic-larger-arch'
-    hidden_sizes = [8192, 16384]
-    learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5,1e-5]
-    dropouts = [0, 0.25, 0.5]
+    experiment_name = 'regular-test'
+    input_size = 51
+    hidden_sizes = [1024]
+    learning_rates = [1e-4]
+    dropouts = [0]
     batch_size = 50
 
     for i in range(5):
@@ -100,14 +101,14 @@ if __name__ == '__main__':
                     params['dropout'] = dropout
 
                     if 'gru' in run_type:
-                        model = BaseGRU(h_size=hidden_size, dropout=dropout).to(device)
+                        model = BaseGRU(input_size=input_size, h_size=hidden_size, dropout=dropout).to(device)
                         params['model_name'] = 'mimic_base_gru'
                         run_train_test(model, params, experiment_name)
                     if 'lstm' in run_type:
-                        model = BaseLSTM(h_size=hidden_size, dropout=dropout).to(device)
+                        model = BaseLSTM(input_size=input_size, h_size=hidden_size, dropout=dropout).to(device)
                         params['model_name'] = 'mimic_base_lstm'
                         run_train_test(model, params, experiment_name)
                     if 'rnn' in run_type:
-                        model = BaseRecurrent(h_size=hidden_size, dropout=dropout).to(device)
+                        model = BaseRecurrent(input_size=input_size, h_size=hidden_size, dropout=dropout).to(device)
                         params['model_name'] = 'mimic_base_rnn'     
                         run_train_test(model, params, experiment_name)
