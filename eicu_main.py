@@ -4,8 +4,8 @@ import sys
 
 from dataloader import EICUDataSet
 from torch.utils.data import DataLoader
-from eicu_models import BaseRecurrent
-from eicu_models import BaseLSTM, BaseGRU
+from models import BaseRecurrent
+from models import BaseLSTM, BaseGRU
 
 from optimization import train_model, test_loop, val_loop
 from evaluation import save_plot_loss
@@ -77,7 +77,8 @@ def run_train_test(model, params, experiment_name):
     run.finish()
 
 if __name__ == '__main__':
-    experiment_name = '22-12-test'
+    experiment_name = 'new-demodata-test'
+    input_size=45
     
     params = {'learning_rate': 5e-4, 'batch_size': 50}
     params['hidden_size'] = 512
@@ -85,20 +86,20 @@ if __name__ == '__main__':
 
     for i in range(5):
         params['iteration'] = i
-        model = BaseGRU(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model = BaseGRU(input_size=input_size, h_size=params['hidden_size'], dropout=params['dropout']).to(device)
         model_name = 'eicu_base_gru'
         params['model_name'] = model_name
         run_train_test(model, params, experiment_name)
 
         params['learning_rate'] = 1e-4
-        model = BaseLSTM(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model = BaseLSTM(input_size=input_size, h_size=params['hidden_size'], dropout=params['dropout']).to(device)
         model_name = 'eicu_base_lstm'
         params['model_name'] = model_name
         run_train_test(model, params, experiment_name)
 
         params['learning_rate'] = 5e-4
         params['dropout'] = .25
-        model = BaseRecurrent(h_size=params['hidden_size'], dropout=params['dropout']).to(device)
+        model = BaseRecurrent(input_size=input_size, h_size=params['hidden_size'], dropout=params['dropout']).to(device)
         model_name = 'eicu_base_rnn'
         params['model_name'] = model_name
         run_train_test(model, params, experiment_name)
