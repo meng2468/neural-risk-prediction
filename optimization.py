@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from sklearn.metrics import classification_report, roc_auc_score
 
-device = "cuda:1" if torch.cuda.is_available() else "cpu"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 def evaluate_pred(pred, y_true, config, wandb):
     y_true = [int(x) for x in y_true]
