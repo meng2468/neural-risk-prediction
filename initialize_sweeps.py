@@ -5,9 +5,8 @@ if __name__ == '__main__':
     sweep_configuration = {
         'method': 'random',
         'name': 'mimic-sweep',
-        'project': 'mimic-random-sweep-test',
         'entity': 'risk-prediction',
-        'metric': {'goal': 'minimize', 'name': 'Val Loss'},
+        'metric': {'goal': 'minimize', 'name': 'Final Val Loss'},
         'parameters': 
         {
             'learning_rate': {'max': 0.01, 'min': 0.00001},
@@ -19,7 +18,7 @@ if __name__ == '__main__':
             'dataset': {'value':'mimic'}
         }
     }
-    project_name = 'mimic-random-sweep-test'
+    project_name = 'mimic-random-sweep-test-2'
 
     sweep_id = wandb.sweep(sweep_configuration, project=project_name)
     print('MIMIC Sweep'+':', sweep_id, project_name)
@@ -28,7 +27,7 @@ if __name__ == '__main__':
         'method': 'random',
         'name': 'eicu-sweep',
         'entity': 'risk-prediction',
-        'metric': {'goal': 'minimize', 'name': 'Val Loss'},
+        'metric': {'goal': 'minimize', 'name': 'Final Val Loss'},
         'parameters': 
         {
             'learning_rate': {'max': 0.01, 'min': 0.00001},
@@ -40,7 +39,7 @@ if __name__ == '__main__':
             'dataset': {'value':'eicu'}
         }
     }
-    project_name = 'eicu-random-sweep-test'
+    project_name = 'eicu-random-sweep-test-2'
 
 
     sweep_id = wandb.sweep(sweep_configuration, project=project_name)

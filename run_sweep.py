@@ -96,6 +96,8 @@ def run_train_test():
             break
 
     model.load_state_dict(torch.load('models/'+config['model_name']+'.model'))
+    val_loss, _ = val_loop(val_loader, model, loss_fn)
+    wandb.log({'Final Val Loss': val_loss})
     test_loop(test_loader, model, loss_fn, config, wandb)
     run.finish()
 
