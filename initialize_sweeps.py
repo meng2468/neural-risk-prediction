@@ -9,7 +9,7 @@ if __name__ == '__main__':
         'metric': {'goal': 'minimize', 'name': 'Final Val Loss'},
         'parameters': 
         {
-            'learning_rate': {'max': 1e-1, 'min': 1e-6},
+            'learning_rate': {'max': 1e-3, 'min': 1e-6},
             'hidden_size': {'values': [512, 1024, 2048, 4096, 8192]},
             'dropout': {'max': .5, 'min': 0.},
             'model_name': {'values': ['gru','lstm','rnn']},
@@ -18,7 +18,7 @@ if __name__ == '__main__':
             'dataset': {'value':'mimic'}
         }
     }
-    project_name = 'mimic-random-sweep-test-2'
+    project_name = 'mimic-random-sweep'
 
     sweep_id = wandb.sweep(sweep_configuration, project=project_name)
     print('MIMIC Sweep'+':', sweep_id, project_name)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
         'metric': {'goal': 'minimize', 'name': 'Final Val Loss'},
         'parameters': 
         {
-            'learning_rate': {'max': 1e-1, 'min': 1e-6},
+            'learning_rate': {'max': 1e-3, 'min': 1e-6},
             'hidden_size': {'values': [512, 1024, 2048, 4096, 8192]},
             'dropout': {'max': .5, 'min': 0.},
             'model_name': {'values': ['gru','lstm','rnn']},
@@ -39,7 +39,7 @@ if __name__ == '__main__':
             'dataset': {'value':'eicu'}
         }
     }
-    project_name = 'eicu-random-sweep-test-2'
+    project_name = 'eicu-random-sweep'
 
 
     sweep_id = wandb.sweep(sweep_configuration, project=project_name)

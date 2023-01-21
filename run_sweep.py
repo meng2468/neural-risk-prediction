@@ -73,7 +73,7 @@ def run_train_test():
         
         if val_l == min(losses[1]):
             print('Best val model performance, storing')
-            torch.save(model.state_dict(), 'models/'+config['model_name']+'.model')
+            torch.save(model.state_dict(), 'models/'+config['model_name']+'_'+config['dataset']+'.model')
             
         tr_l, tr_a = train_model(train_loader, model, loss_fn, optimizer)
         wandb.log({'Train Loss': tr_l, 'Train Accuracy': tr_a}, commit=False)
@@ -95,7 +95,7 @@ def run_train_test():
             print("Stopping model training early, max epochs")
             break
 
-    model.load_state_dict(torch.load('models/'+config['model_name']+'.model'))
+    model.load_state_dict(torch.load('models/'+config['model_name']+'_'+config['dataset']+'.model'))
     val_loss, _ = val_loop(val_loader, model, loss_fn)
     wandb.log({'Final Val Loss': val_loss})
     test_loop(test_loader, model, loss_fn, config, wandb)
