@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 
 import ast
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
+device = "cuda:1" if torch.cuda.is_available() else "cpu"
 
 class EICUDataSet(Dataset):
     def __init__(self, csv_file_x, csv_file_y):

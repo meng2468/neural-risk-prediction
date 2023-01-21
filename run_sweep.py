@@ -13,7 +13,7 @@ from optimization import train_model, test_loop, val_loop
 from evaluation import save_plot_loss
 
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
+device = "cuda:1" if torch.cuda.is_available() else "cpu"
 print('Running on device', device)
 
 def get_dataloaders(config):
