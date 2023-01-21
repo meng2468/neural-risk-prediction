@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, roc_auc_score
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def evaluate_pred(pred, y_true, params, wandb):
+def evaluate_pred(pred, y_true, config, wandb):
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
     report = classification_report(y_true, pred, output_dict=True)
@@ -18,12 +18,12 @@ def evaluate_pred(pred, y_true, params, wandb):
     if 'experiments.csv' not in os.listdir('evaluation/'):
         with open('evaluation/experiments.csv', 'a') as f:
             writer = csv.writer(f)
-            writer.writerow(list(params.keys()) + ['precision','recall','f1-score','support','roc auc','accuracy'])
+            writer.writerow(list(config.keys()) + ['precision','recall','f1-score','support','roc auc','accuracy'])
 
 
     with open('evaluation/experiments.csv', 'a') as f:
         writer = csv.writer(f)
-        store = [v for _, v in params.items()]
+        store = [v for _, v in config.items()]
         store += [y for _, y in report['macro avg'].items()]
         store += [roc_auc]+[report['accuracy']]
         writer.writerow(store)
@@ -85,7 +85,7 @@ def val_loop(dataloader, model, loss_fn):
 
     return val_loss, correct
 
-def test_loop(dataloader, model, loss_fn, params, wandb):
+def test_loop(dataloader, model, loss_fn, config, wandb):
     model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -105,7 +105,7 @@ def test_loop(dataloader, model, loss_fn, params, wandb):
 
     y_pred = torch.round(total_pred)
 
-    f1, roc_auc = evaluate_pred(y_pred, total_true, params, wandb)
+    f1, roc_auc = evaluate_pred(y_pred, total_true, config, wandb)
 
     print('-'*20)
     print('Running Test Evaluation')
@@ -121,6 +121,6 @@ def test_loop(dataloader, model, loss_fn, params, wandb):
 
     wandb.alert(
         title='Model Completed Evaluation',
-        text=params['model_name'] + ' finished training with ROC ' + str(roc_auc) + ' and loss of ' + str(test_loss)
+        text=config['model_name'] + ' finished training with ROC ' + str(roc_auc) + ' and loss of ' + str(test_loss)
     )
     return f1['macro avg']['f1-score'], roc_auc
