@@ -9,10 +9,13 @@ from sklearn.metrics import classification_report, roc_auc_score
 device = "cuda:1" if torch.cuda.is_available() else "cpu"
 
 def evaluate_pred(pred, y_true, config, wandb):
+    probs = pred.cpu()
+    pred = torch.round(pred)
     y_true = [int(x) for x in y_true]
     pred = [int(x) for x in pred]
+
+    roc_auc = roc_auc_score(y_true, probs)
     report = classification_report(y_true, pred, output_dict=True)
-    roc_auc = roc_auc_score(y_true, pred)
 
     # Store model performance in a csv
     if 'experiments.csv' not in os.listdir('evaluation/'):
@@ -103,9 +106,8 @@ def test_loop(dataloader, model, loss_fn, config, wandb):
             total_pred = torch.cat((total_pred, pred), 0)
             total_true += list(y)
 
-    y_pred = torch.round(total_pred)
 
-    f1, roc_auc = evaluate_pred(y_pred, total_true, config, wandb)
+    f1, roc_auc = evaluate_pred(total_pred, total_true, config, wandb)
 
     print('-'*20)
     print('Running Test Evaluation')
