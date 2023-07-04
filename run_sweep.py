@@ -91,7 +91,7 @@ def run_train_test():
                 break
         epoch += 1
 
-        if epoch >= 300:
+        if epoch >= 60:
             print("Stopping model training early, max epochs")
             break
 
